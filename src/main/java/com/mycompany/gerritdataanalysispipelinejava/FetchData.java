@@ -37,6 +37,8 @@ public class FetchData {
         System.out.println("Successfully get file: " + path);
     }
     
+    
+    
     //write jsondata to a json file
     public static void writeJsonToFile(JSONObject jsonObject) throws IOException{
         try (FileWriter jsonFile = new FileWriter("output.json")) {//GerritDataAnalysisPipelineJava/scr/main/java/com/mycompany/gerritdataanalysispipelinejava/
