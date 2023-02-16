@@ -30,6 +30,7 @@ import org.json.simple.parser.ParseException;
  * @author samme
  */
 public class FetchData {
+    
 
     //trying to accessJson file
     public static void accessJsonFile(){
