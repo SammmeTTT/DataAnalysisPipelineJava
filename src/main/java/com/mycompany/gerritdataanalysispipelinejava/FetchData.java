@@ -75,13 +75,12 @@ public class FetchData {
     public static String apiRequest() throws IOException, InterruptedException, ParseException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Write a start date in format: 2023-02-13");
-        //String startDate = "{"+ scanner.next() +"}";
+        String startDate = scanner.next();
         System.out.println("Write a end date in format: 2023-02-15");
-        //String endDate ="{" + scanner.next() +"}";
+        String endDate = scanner.next();
         
-        //String requestUrl = "https://android-review.googlesource.com/changes/?q=after:"+startDate1 + "ANDbefore:"+ endDate1 + "&status:open";
-               // "https://android-review.googlesource.com/changes/?q=status:open,5000"; //?q=after:{2023-02-13}ANDbefore:{2023-02-14}"; //"https://android-review.googlesource.com/changes/?q=status:open"; //"https://android-review.googlesource.com/changes/?q=after:%7B" + startDate + "%7DANDbefore:%7B" + endDate + "%7D";
-                //"https://android-review.googlesource.com/changes/"; //?q=status:open";
+        //String requestUrl = "https://android-review.googlesource.com/changes/?q=after:"+startDate1 + "+before:"+ endDate1 + "&status:open";
+               
                 //"https://android-review.googlesource.com/changes/?q=after:" + "%7B2023-02-13%7D" + "ANDbefore:" + "%7B2023-02-14%7D";
                 //"https://android-review.googlesource.com/changes/?q=after:%7B" + startDate + "%7DANDbefore:%7B" + endDate + "%7D";
                 //https://android-review.googlesource.com/changes/?q=after:{2023-02-13}ANDbefore:{2023-02-14}ANDstatus:open
@@ -95,7 +94,7 @@ public class FetchData {
         JSONArray singleArray = null;
         
         try{
-            URI url = UriBuilder.fromUri("https://android-review.googlesource.com/changes/?q=after:2023-02-13+before:2023-03-13")
+            URI url = UriBuilder.fromUri("https://android-review.googlesource.com/changes/?q=after:"+startDate+"+before:"+endDate)
                 //.queryParam("q", "status:closed")
                 //.queryParam("q", "after:2023-02-13+before:2023-02-14")
                 //.queryParam("q", "skip-visibility:true")
