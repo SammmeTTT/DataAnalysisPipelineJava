@@ -75,9 +75,9 @@ public class FetchData {
     public static String apiRequest() throws IOException, InterruptedException, ParseException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Write a start date in format: 2023-02-13");
-        String startDate = "{"+ scanner.next() +"}";
+        //String startDate = "{"+ scanner.next() +"}";
         System.out.println("Write a end date in format: 2023-02-15");
-        String endDate ="{" + scanner.next() +"}";
+        //String endDate ="{" + scanner.next() +"}";
         
         //String requestUrl = "https://android-review.googlesource.com/changes/?q=after:"+startDate1 + "ANDbefore:"+ endDate1 + "&status:open";
                // "https://android-review.googlesource.com/changes/?q=status:open,5000"; //?q=after:{2023-02-13}ANDbefore:{2023-02-14}"; //"https://android-review.googlesource.com/changes/?q=status:open"; //"https://android-review.googlesource.com/changes/?q=after:%7B" + startDate + "%7DANDbefore:%7B" + endDate + "%7D";
@@ -95,11 +95,11 @@ public class FetchData {
         JSONArray singleArray = null;
         
         try{
-            URI url = UriBuilder.fromUri("https://android-review.googlesource.com/changes/?q=status:open")
-                .queryParam("q", "status:closed")
-                .queryParam("q", "after:{2023-02-13}ANDbefore:{2023-02-14}")
+            URI url = UriBuilder.fromUri("https://android-review.googlesource.com/changes/?q=after:2023-02-13+before:2023-03-13")
+                //.queryParam("q", "status:closed")
+                //.queryParam("q", "after:2023-02-13+before:2023-02-14")
                 //.queryParam("q", "skip-visibility:true")
-                .build(startDate, endDate);
+                .build(/*startDate, endDate*/);
             
             System.out.println("url: " + url + "\n");
             
@@ -110,8 +110,9 @@ public class FetchData {
                 .uri(url)
                 .build();
             
+            int start= 0;
             //while(sendRequest==true){
-                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());//starta på 2000, om mindre break whileloop
                 jsonData = response.body();
                 jsonResponseData = jsonData.substring(5, jsonData.length()-1);
 //                arrayToParse = (JSONArray) parseToJson.parse(jsonResponseData);//skapar 1 obj inuti två arrayer?? ist. för ett det första är tomt
@@ -133,24 +134,23 @@ public class FetchData {
     static JSONArray toJsonArray(String informationString) throws ParseException {
         System.out.println("request string: " + informationString);
         JSONParser parseToJson = new JSONParser();
-        JSONArray arrayToParse;
+        JSONArray arrayToParse=null;
         JSONArray singleArray = null;
         
         try{
             arrayToParse = (JSONArray) parseToJson.parse(String.valueOf(informationString));//skapar 1 obj inuti två arrayer?? ist. för ett det första är tomt
-            singleArray = (JSONArray) arrayToParse.get(0);
+            //singleArray = (JSONArray) arrayToParse.get(0);
         }
         catch(ParseException e){
             System.out.println("Could not parse string to json Array");
         }
-        return singleArray;
+        return arrayToParse;
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, ParseException {
         
         String client = apiRequest();
         JSONArray array = toJsonArray(client);
-        //System.out.println("Size: " + array.size());
         
         writeJsonToFile(array);
         JSONArray jsonData = accessJsonFile();
