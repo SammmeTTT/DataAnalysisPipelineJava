@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.mycompany.gerritdataanalysispipelinejava.JsonContent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.mycompany.gerritdataanalysispipelinejava.AnalyseData.analyzeJsonData;
+import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createPieChart;
 import java.lang.Object;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -147,13 +148,14 @@ public class FetchData {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, ParseException {
-        
+        //Fix start and end Date here instead
         String client = apiRequest();
         JSONArray array = toJsonArray(client);
         
         writeJsonToFile(array);
         JSONArray jsonData = accessJsonFile();
-        analyzeJsonData(jsonData);
+        String[] pieChartData= analyzeJsonData(jsonData);
+        VisualizeData.createPieChart(pieChartData);
     }
 
 }

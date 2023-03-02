@@ -6,14 +6,24 @@ package com.mycompany.gerritdataanalysispipelinejava;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.PieChart;
+import javafx.scene.image.WritableImage;
+import javafx.stage.Stage;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.imageio.ImageIO;
+//import javafx.embed.swing.SwingFXUtils;
+
 
 public class VisualizeData{
     
@@ -43,21 +53,50 @@ public class VisualizeData{
         
     }
     
-    public static void createPieChart(){
+    public static void createPieChart(String[] pieChartData){
+        Stage primaryStage = null;
+        String startDate = pieChartData[0];
+        String endDate = pieChartData[1];
+        String stringOfOpenReviews = pieChartData[2];
+        String stringOfClosedReviews = pieChartData[3];
+        
+        double numberOfOpenReviews= Double.parseDouble(stringOfOpenReviews);
+        double numberOfClosedReviews= Double.parseDouble(stringOfClosedReviews);
+
         
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
-           new PieChart.Data("",0),
-           new PieChart.Data("",0),
-           new PieChart.Data("",0),
-           new PieChart.Data("",0),
-           new PieChart.Data("",0),
-           new PieChart.Data("",0)
+           new PieChart.Data("Closed Reviews",numberOfClosedReviews),
+           new PieChart.Data("Open Reviews",numberOfOpenReviews)
+//           new PieChart.Data("",0),
+//           new PieChart.Data("",0),
+
 
         );
         
         PieChart pieChart = new PieChart(pieData);
-        pieChart.setTitle("PieChart");
+        pieChart.setTitle("PieChart of Opened and Closed data between: " + startDate + " and " + endDate);
                 
+        Group baseGroup = new Group(pieChart);
+        Scene scene = new Scene(baseGroup,600,400);
+        
+        primaryStage.setTitle("Gerrit Analysed Data");
+        primaryStage.setScene(scene);
+        primaryStage.sizeToScene();
+        primaryStage.show();
+        
+//        WritableImage pieChartImage= scene.snapshot(null);
+//        File file = new File("PieChart.png");
+//        try{
+//            ImageIO.writeSwingFXUtils.fromFXImage(pieChartImage,null), "png", file);2
+//        
+//        }
+//        catch(Exception e){
+//        }
+//        
+//        PDDocument doc = new PDDocument();
+//        PDPage page = new PDPage();
+//        
+        
     } 
     
     public static void createPDF(){
@@ -91,7 +130,15 @@ public class VisualizeData{
     
  public static void main(String[] args){
      String[] tableData = {"2023-02-10","2023-02-13","1500"};
-     createTable(tableData);
- 
+     //createTable(tableData);
+     
+     
+     
  }   
+
+ 
+ 
+ 
+ 
+ 
 }
