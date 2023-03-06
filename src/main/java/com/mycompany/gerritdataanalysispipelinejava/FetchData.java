@@ -73,12 +73,7 @@ public class FetchData {
     
     
     //sends api request and get a string response
-    public static String apiRequest() throws IOException, InterruptedException, ParseException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Write a start date in format: 2023-02-13");
-        String startDate = scanner.next();
-        System.out.println("Write a end date in format: 2023-02-15");
-        String endDate = scanner.next();
+    public static String apiRequest(String startDate, String endDate) throws IOException, InterruptedException, ParseException {
         
         //String requestUrl = "https://android-review.googlesource.com/changes/?q=after:"+startDate1 + "+before:"+ endDate1 + "&status:open";
                
@@ -93,34 +88,55 @@ public class FetchData {
         JSONParser parseToJson = new JSONParser();
         JSONArray arrayToParse;
         JSONArray singleArray = null;
-        
+         HttpRequest request = null;
         try{
-            URI url = UriBuilder.fromUri("https://android-review.googlesource.com/changes/?q=after:"+startDate+"+before:"+endDate)
-                //.queryParam("q", "status:closed")
-                //.queryParam("q", "after:2023-02-13+before:2023-02-14")
-                //.queryParam("q", "skip-visibility:true")
-                .build(/*startDate, endDate*/);
-            
-            System.out.println("url: " + url + "\n");
-            
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .header("accept", "application/json")
-                .uri(url)
-                .build();
-            
             int start= 0;
-            //while(sendRequest==true){
-                response = client.send(request, HttpResponse.BodyHandlers.ofString());//starta på 2000, om mindre break whileloop
+            int limit = 2000;
+            int difference = 0;
+ 
+//            while(start<limit){
+  
+//                if(start == limit){ //ev 2000-1
+//                    System.out.println("start: " + start);
+//                    start = limit;
+//                    System.out.println("start2: " + start);
+//                    limit = limit + 2000;
+//                    System.out.println("limit: " + limit);
+//                }
+//              
+//                else if(limit-start==20000){
+//                    System.out.println("Finished fetching data");
+//                    break;
+//                }
+//                  start++;
+//            }
+
+            while(sendRequest==true){
+                URI url = UriBuilder.fromUri("https://android-review.googlesource.com/changes/?q=after:"+startDate+"+before:"+endDate +"&start="+start)
+                   .build();
+
+                //System.out.println("url: " + url + "\n");
+
+                HttpClient client = HttpClient.newHttpClient();
+
+                request = HttpRequest.newBuilder()
+                       .GET()
+                       .header("accept", "application/json")
+                       .uri(url)
+                       .build();
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                //sista datum
                 jsonData = response.body();
                 jsonResponseData = jsonData.substring(5, jsonData.length()-1);
-//                arrayToParse = (JSONArray) parseToJson.parse(jsonResponseData);//skapar 1 obj inuti två arrayer?? ist. för ett det första är tomt
-//                singleArray = (JSONArray) arrayToParse.get(0);
-//                JSONObject lastObj = (JSONObject) singleArray.get(0);
-//                sendRequest = (boolean) lastObj.get("_more_changes");
-            //}
-        
+                arrayToParse = (JSONArray) parseToJson.parse(jsonResponseData);
+                start=2000;
+                if(start == 20000){
+                    sendRequest = false;
+                
+                }
+            }
+            
+           
        
         }
         catch(IOException |IllegalArgumentException |InterruptedException e){
@@ -135,11 +151,9 @@ public class FetchData {
         System.out.println("request string: " + informationString);
         JSONParser parseToJson = new JSONParser();
         JSONArray arrayToParse=null;
-        JSONArray singleArray = null;
         
         try{
             arrayToParse = (JSONArray) parseToJson.parse(String.valueOf(informationString));//skapar 1 obj inuti två arrayer?? ist. för ett det första är tomt
-            //singleArray = (JSONArray) arrayToParse.get(0);
         }
         catch(ParseException e){
             System.out.println("Could not parse string to json Array");
@@ -149,13 +163,21 @@ public class FetchData {
 
     public static void main(String[] args) throws IOException, InterruptedException, ParseException {
         //Fix start and end Date here instead
-        String client = apiRequest();
+        
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Write a start date in format: 2023-02-13");
+        String startDate = scanner.next();
+        System.out.println("Write a end date in format: 2023-02-15");
+        String endDate = scanner.next();
+        
+        String client = apiRequest(startDate,endDate);
         JSONArray array = toJsonArray(client);
         
         writeJsonToFile(array);
         JSONArray jsonData = accessJsonFile();
         String[] pieChartData= analyzeJsonData(jsonData);
-        VisualizeData.createPieChart(pieChartData);
+        //String[] dataInput= {startDate, endDate, pieChartData[0],pieChartData[1]};
+        //VisualizeData.createPieChart(dataInput);
     }
 
 }

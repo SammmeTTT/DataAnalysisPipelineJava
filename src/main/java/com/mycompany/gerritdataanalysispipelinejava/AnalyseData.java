@@ -42,7 +42,7 @@ public class AnalyseData {
         String strOpenReviews = String.valueOf(nrOfOpenReviews);
         String strClosedReviews = String.valueOf(nrOfClosedReviews);
 
-        String[] output = {"2023-01-10","2023-02-10",strOpenReviews, strClosedReviews};    
+        String[] output = {strOpenReviews, strClosedReviews};    
         return output;
     }
     

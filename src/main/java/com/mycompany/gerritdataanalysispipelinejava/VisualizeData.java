@@ -34,7 +34,7 @@ public class VisualizeData{
         
         
         String[][] tableContent={
-            {startDate,endDate,numberOfOpenReviews}
+            {startDate,endDate, numberOfOpenReviews}
         };
         
         String[] headers = {"Start Date", "End Date", "Number of Open Reviews"};
@@ -54,7 +54,7 @@ public class VisualizeData{
     }
     
     public static void createPieChart(String[] pieChartData){
-        Stage primaryStage = null;
+        Stage primaryStage = null;//probably this causing the error, Stage should be initiated
         String startDate = pieChartData[0];
         String endDate = pieChartData[1];
         String stringOfOpenReviews = pieChartData[2];
@@ -62,7 +62,8 @@ public class VisualizeData{
         
         double numberOfOpenReviews= Double.parseDouble(stringOfOpenReviews);
         double numberOfClosedReviews= Double.parseDouble(stringOfClosedReviews);
-
+        System.out.println(numberOfOpenReviews);
+        System.out.println(numberOfClosedReviews);
         
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
            new PieChart.Data("Closed Reviews",numberOfClosedReviews),
@@ -73,7 +74,7 @@ public class VisualizeData{
 
         );
         
-        PieChart pieChart = new PieChart(pieData);
+        PieChart pieChart = new PieChart(pieData); //something crashes wrongly initialized
         pieChart.setTitle("PieChart of Opened and Closed data between: " + startDate + " and " + endDate);
                 
         Group baseGroup = new Group(pieChart);
@@ -129,7 +130,7 @@ public class VisualizeData{
     
     
  public static void main(String[] args){
-     String[] tableData = {"2023-02-10","2023-02-13","1500"};
+     //String[] tableData = {"2023-02-10","2023-02-13","1500"};
      //createTable(tableData);
      
      
