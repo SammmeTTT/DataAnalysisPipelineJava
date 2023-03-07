@@ -73,7 +73,7 @@ public class FetchData {
     
     
     //sends api request and get a string response
-    public static String apiRequest(String startDate, String endDate) throws IOException, InterruptedException, ParseException {
+    public static JSONArray apiRequest(String startDate, String endDate) throws IOException, InterruptedException, ParseException {
         
         //String requestUrl = "https://android-review.googlesource.com/changes/?q=after:"+startDate1 + "+before:"+ endDate1 + "&status:open";
                
@@ -86,13 +86,15 @@ public class FetchData {
         boolean sendRequest = true;
         HttpResponse<String> response = null;
         JSONParser parseToJson = new JSONParser();
-        JSONArray arrayToParse;
+        JSONArray arrayToParse = null;
         JSONArray singleArray = null;
-         HttpRequest request = null;
+        HttpRequest request = null;
+        
         try{
             int start= 0;
             int limit = 2000;
             int difference = 0;
+            int counter = 0;
  
 //            while(start<limit){
   
@@ -128,22 +130,35 @@ public class FetchData {
                 //sista datum
                 jsonData = response.body();
                 jsonResponseData = jsonData.substring(5, jsonData.length()-1);
-                arrayToParse = (JSONArray) parseToJson.parse(jsonResponseData);
-                start=2000;
+                if(counter==0){
+                    arrayToParse = (JSONArray) parseToJson.parse(jsonResponseData);
+                }
+                else{
+                    JSONArray tempArray = (JSONArray) parseToJson.parse(jsonResponseData); 
+                    arrayToParse.addAll(tempArray);
+                }
+                counter++;
+//                if(start == 10000){
+//                    break;
+//                }
+                start = start + 2000;
                 if(start == 20000){
                     sendRequest = false;
+//                
+                }
+                int arraySize = arrayToParse.size();
                 
+                if(arraySize < start && arraySize > (start-2000)){
+                    sendRequest = false;
                 }
             }
-            
-           
-       
+
         }
         catch(IOException |IllegalArgumentException |InterruptedException e){
             System.out.println("Something is wrong with the request url, please change it and try again!");
         }
        
-        return jsonResponseData;
+        return arrayToParse;
     }
 
     //makes an jsonobject of the request string
@@ -165,13 +180,13 @@ public class FetchData {
         //Fix start and end Date here instead
         
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Write a start date in format: 2023-02-13");
-        String startDate = scanner.next();
-        System.out.println("Write a end date in format: 2023-02-15");
-        String endDate = scanner.next();
+        System.out.println("Write a start date in format (2023-02-13): ");
+        String startDate = "2023-01-10";//scanner.next();
+        System.out.println("Write a end date in format (2023-02-15): ");
+        String endDate = "2023-01-29";//scanner.next();
         
-        String client = apiRequest(startDate,endDate);
-        JSONArray array = toJsonArray(client);
+        JSONArray array = apiRequest(startDate,endDate);
+        //JSONArray array = toJsonArray(client);
         
         writeJsonToFile(array);
         JSONArray jsonData = accessJsonFile();
