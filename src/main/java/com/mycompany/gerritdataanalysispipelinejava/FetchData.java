@@ -7,7 +7,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.mycompany.gerritdataanalysispipelinejava.JsonContent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.mycompany.gerritdataanalysispipelinejava.AnalyseData.analyzeJsonData;
+import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createLineGraph;
 import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createPieChart;
+import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createTable;
 import java.lang.Object;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -75,10 +77,8 @@ public class FetchData {
     //sends api request and get a string response
     public static JSONArray apiRequest(String startDate, String endDate) throws IOException, InterruptedException, ParseException {
         
-        //String requestUrl = "https://android-review.googlesource.com/changes/?q=after:"+startDate1 + "+before:"+ endDate1 + "&status:open";
+        //String requestUrl = "https://android-review.googlesource.com/changes/?q=after:"+startDate1 + "+before:"+ endDate1;
                
-                //"https://android-review.googlesource.com/changes/?q=after:" + "%7B2023-02-13%7D" + "ANDbefore:" + "%7B2023-02-14%7D";
-                //"https://android-review.googlesource.com/changes/?q=after:%7B" + startDate + "%7DANDbefore:%7B" + endDate + "%7D";
                 //https://android-review.googlesource.com/changes/?q=after:{2023-02-13}ANDbefore:{2023-02-14}ANDstatus:open
 
         String jsonData; 
@@ -87,31 +87,12 @@ public class FetchData {
         HttpResponse<String> response = null;
         JSONParser parseToJson = new JSONParser();
         JSONArray arrayToParse = null;
-        JSONArray singleArray = null;
         HttpRequest request = null;
         
         try{
             int start= 0;
             int limit = 2000;
-            int difference = 0;
             int counter = 0;
- 
-//            while(start<limit){
-  
-//                if(start == limit){ //ev 2000-1
-//                    System.out.println("start: " + start);
-//                    start = limit;
-//                    System.out.println("start2: " + start);
-//                    limit = limit + 2000;
-//                    System.out.println("limit: " + limit);
-//                }
-//              
-//                else if(limit-start==20000){
-//                    System.out.println("Finished fetching data");
-//                    break;
-//                }
-//                  start++;
-//            }
 
             while(sendRequest==true){
                 URI url = UriBuilder.fromUri("https://android-review.googlesource.com/changes/?q=after:"+startDate+"+before:"+endDate +"&start="+start)
@@ -138,9 +119,7 @@ public class FetchData {
                     arrayToParse.addAll(tempArray);
                 }
                 counter++;
-//                if(start == 10000){
-//                    break;
-//                }
+
                 start = start + 2000;
                 if(start == 20000){
                     sendRequest = false;
@@ -181,18 +160,21 @@ public class FetchData {
         
         Scanner scanner = new Scanner(System.in);
         System.out.println("Write a start date in format (2023-02-13): ");
-        String startDate = "2023-01-10";//scanner.next();
+        String startDate = scanner.next(); //"2023-01-10"
         System.out.println("Write a end date in format (2023-02-15): ");
-        String endDate = "2023-01-29";//scanner.next();
+        String endDate = scanner.next(); //"2023-02-10"
         
         JSONArray array = apiRequest(startDate,endDate);
         //JSONArray array = toJsonArray(client);
         
         writeJsonToFile(array);
         JSONArray jsonData = accessJsonFile();
-        String[] pieChartData= analyzeJsonData(jsonData);
-        //String[] dataInput= {startDate, endDate, pieChartData[0],pieChartData[1]};
+        String[] pieChartData = analyzeJsonData(jsonData);
+        String[] dataInput= {startDate, endDate, pieChartData[0],pieChartData[1]};
         //VisualizeData.createPieChart(dataInput);
+        createTable(dataInput);
+     //createPieChart(tableData);
+     createLineGraph(dataInput);
     }
 
 }

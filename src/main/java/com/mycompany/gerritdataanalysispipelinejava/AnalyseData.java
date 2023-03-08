@@ -45,9 +45,5 @@ public class AnalyseData {
         String[] output = {strOpenReviews, strClosedReviews};    
         return output;
     }
-    
-    
-    
-    
-    
+   
 }
