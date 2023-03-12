@@ -36,6 +36,9 @@ import java.net.http.HttpHeaders;
 import java.util.Optional;
 import javax.ws.rs.core.UriBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
 public class FetchData {
 
     //trying to access Json file
@@ -123,7 +126,7 @@ public class FetchData {
                 start = start + 2000;
                 if(start == 20000){
                     sendRequest = false;
-//                
+                
                 }
                 int arraySize = arrayToParse.size();
                 
@@ -154,27 +157,26 @@ public class FetchData {
         }
         return arrayToParse;
     }
-
+    
     public static void main(String[] args) throws IOException, InterruptedException, ParseException {
         //Fix start and end Date here instead
         
         Scanner scanner = new Scanner(System.in);
         System.out.println("Write a start date in format (2023-02-13): ");
-        String startDate = scanner.next(); //"2023-01-10"
+        String startDate = "2023-01-10"; //scanner.next()
         System.out.println("Write a end date in format (2023-02-15): ");
-        String endDate = scanner.next(); //"2023-02-10"
+        String endDate = "2023-02-10"; //scanner.next()
         
         JSONArray array = apiRequest(startDate,endDate);
         //JSONArray array = toJsonArray(client);
         
         writeJsonToFile(array);
         JSONArray jsonData = accessJsonFile();
-        String[] pieChartData = analyzeJsonData(jsonData);
-        String[] dataInput= {startDate, endDate, pieChartData[0],pieChartData[1]};
-        //VisualizeData.createPieChart(dataInput);
-        createTable(dataInput);
-     //createPieChart(tableData);
-     createLineGraph(dataInput);
+        String[] dataInput = {startDate, endDate};
+        String[] pieChartData = analyzeJsonData(jsonData, dataInput);
+       // String[] visualizationInput= {startDate, endDate, pieChartData[0],pieChartData[1]};
+        //createTable(visualizationInput);
+        createLineGraph(pieChartData);
     }
 
 }
