@@ -8,7 +8,7 @@ import com.mycompany.gerritdataanalysispipelinejava.JsonContent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.mycompany.gerritdataanalysispipelinejava.AnalyseData.analyzeJsonData;
 import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createLineGraph;
-import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createPieChart;
+import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.frameToPdf;
 import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createTable;
 import java.lang.Object;
 import java.io.File;
@@ -34,6 +34,7 @@ import org.json.simple.parser.ParseException;
 import java.net.URI;
 import java.net.http.HttpHeaders;
 import java.util.Optional;
+import javax.swing.JFrame;
 import javax.ws.rs.core.UriBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -163,9 +164,12 @@ public class FetchData {
         
         Scanner scanner = new Scanner(System.in);
         System.out.println("Write a start date in format (2023-02-13): ");
-        String startDate = "2023-01-10"; //scanner.next()
+        String tempDate = "2023-01-15"; //scanner.next()
+        int tempDay = Integer.parseInt(tempDate.substring(9, 10));
+        String correctDay = String.valueOf(tempDay-1);
+        String startDate = tempDate.replace(tempDate.substring(9, 10),correctDay);
         System.out.println("Write a end date in format (2023-02-15): ");
-        String endDate = "2023-02-10"; //scanner.next()
+        String endDate = "2023-01-29"; //scanner.next()
         
         JSONArray array = apiRequest(startDate,endDate);
         //JSONArray array = toJsonArray(client);
@@ -176,7 +180,8 @@ public class FetchData {
         String[] pieChartData = analyzeJsonData(jsonData, dataInput);
        // String[] visualizationInput= {startDate, endDate, pieChartData[0],pieChartData[1]};
         //createTable(visualizationInput);
-        createLineGraph(pieChartData);
+        JFrame frame = createLineGraph(pieChartData);
+        frameToPdf(frame);
     }
 
 }
