@@ -5,7 +5,6 @@
 package com.mycompany.gerritdataanalysispipelinejava;
 
 import com.itextpdf.text.BadElementException;
-import com.mycompany.gerritdataanalysispipelinejava.PieGraph;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
@@ -73,7 +72,6 @@ public class VisualizeData{
         JFrame frame = new JFrame("Analyzed Review Data Visualization");
         frame.add(new JScrollPane(dataTable));
         
-        
         //frame.add(JFreeChart);
         
         frame.setSize(500, 500);
@@ -81,49 +79,6 @@ public class VisualizeData{
         frame.setVisible(true);       
         
     }
-    
-    public static void createPieChart(String[] pieChartData){
-        //Stage primaryStage = new Stage();//probably this causing the error, Stage should be initiated
-        String startDate = pieChartData[0];
-        String endDate = pieChartData[1];
-        String stringOfOpenReviews = pieChartData[2];
-        String stringOfClosedReviews = pieChartData[3];
-        
-        double numberOfOpenReviews= Double.parseDouble(stringOfOpenReviews);
-        double numberOfClosedReviews= Double.parseDouble(stringOfClosedReviews);
-        System.out.println(numberOfOpenReviews);
-        System.out.println(numberOfClosedReviews);
-        
-        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
-           new PieChart.Data("Closed Reviews",numberOfClosedReviews),
-           new PieChart.Data("Open Reviews",numberOfOpenReviews)          
-        );
-        
-        PieChart pieChart; //something crashes wrongly initialized
-        pieChart = new PieChart(pieData);
-        pieChart.setTitle("PieChart of Opened and Closed data between: " + startDate + " and " + endDate);
-                
-        Group baseGroup = new Group(pieChart);
-        Scene scene = new Scene(baseGroup,600,400);
-        Stage primaryStage = new Stage();
-        primaryStage.setTitle("Gerrit Analysed Data");
-        primaryStage.setScene(scene);
-        primaryStage.sizeToScene();
-        primaryStage.show();
-        
-//        WritableImage pieChartImage= scene.snapshot(null);
-//        File file = new File("PieChart.png");
-//        try{
-//            ImageIO.writeSwingFXUtils.fromFXImage(pieChartImage,null), "png", file);2
-//        
-//        }
-//        catch(Exception e){
-//        }
-//        
-//        PDDocument doc = new PDDocument();
-//        PDPage page = new PDPage();
- 
-    } 
     
     public static JPanel createLineGraph(String[] input){
         
@@ -182,7 +137,7 @@ public class VisualizeData{
         dataOpened.setValue(openReviews[j], "Amount", dates[j]);
         dataClosed.setValue(closedReviews[j], "Amount", dates[j]);
     } 
- //Days in Month \n Start Date: "+ "startDate" + "and End Date: " + "endDate"
+        //Days in Month \n Start Date: "+ "startDate" + "and End Date: " + "endDate"
         JFreeChart graphOpen = ChartFactory.createLineChart("Code Review Graph","Start Year: "+startYear+" End Year: "+endYear+" Start Month: "+startMonth+" End Month: "+ endMonth +" Days in Month: (see graph)","Number of Opened Reviews",dataOpened,PlotOrientation.VERTICAL,false,true,false);
         JFreeChart graphClosed = ChartFactory.createLineChart("Code Review Graph","Start Year: "+startYear+" End Year: "+endYear+" Start Month: "+startMonth+" End Month: "+endMonth + " Days in Month: (see graph)","Number of Closed Reviews",dataClosed,PlotOrientation.VERTICAL,false,true,false);
         
@@ -198,9 +153,6 @@ public class VisualizeData{
         Color lineChartColor = new Color(0,100,200);
         lineRenderer.setSeriesPaint(0,lineChartColor);
         
-        //Create new content frame
-       
-           
         //create panel to display graph
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel,BoxLayout.Y_AXIS));
@@ -275,22 +227,6 @@ public class VisualizeData{
         File imageResult = new File("AnalyzedData.png");
         ImageIO.write(image, "png", imageResult);
         return image;
-    }
-    
- public static void main(String[] args) throws Exception{
-     String[] tableData = {"2023-02-10","2023-02-13","200","1500"};
-     //createTable(tableData);
-     //createPieChart(tableData);
-     createLineGraph(tableData);
-     //createPDF();
-     //Stage stage = new Stage();
-     //PieGraph.start(stage);
-     
- }   
-
- 
- 
- 
- 
+    }   
  
 }

@@ -148,21 +148,6 @@ public class FetchData {
        
         return arrayToParse;
     }
-
-    //makes an jsonobject of the request string
-    static JSONArray toJsonArray(String informationString) throws ParseException {
-        System.out.println("request string: " + informationString);
-        JSONParser parseToJson = new JSONParser();
-        JSONArray arrayToParse=null;
-        
-        try{
-            arrayToParse = (JSONArray) parseToJson.parse(String.valueOf(informationString));//skapar 1 obj inuti två arrayer?? ist. för ett det första är tomt
-        }
-        catch(ParseException e){
-            System.out.println("Could not parse string to json Array");
-        }
-        return arrayToParse;
-    }
     
     public static void main(String[] args) throws IOException, InterruptedException, ParseException, FileNotFoundException, DocumentException {
         //Fix start and end Date here instead

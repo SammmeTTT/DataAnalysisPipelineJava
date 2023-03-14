@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.TestClass to edit this template
  */
-package Test;
+package com.mycompany.gerritdataanalysispipelinejava;
 
 import com.mycompany.gerritdataanalysispipelinejava.FetchData;
 import java.io.FileNotFoundException;

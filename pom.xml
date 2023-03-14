@@ -5,25 +5,14 @@
     <artifactId>GerritDataAnalysisPipelineJava</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-        </plugins>
-    </build>
+   
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.7.2</version>
-             <type>jar</type>
-         </dependency>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -36,9 +25,9 @@
             <version>1.5.0</version>
         </dependency>
         <dependency>
-          <groupId>org.jfree</groupId>
-          <artifactId>jcommon</artifactId>
-          <version>1.0.24</version>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>1.0.24</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -74,4 +63,41 @@
         <maven.compiler.target>19</maven.compiler.target>
         <exec.mainClass>com.mycompany.gerritdataanalysispipelinejava.GerritDataAnalysisPipelineJava</exec.mainClass>
     </properties>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.mycompany.gerritdataanalysispipelinejava.FetchData</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>
