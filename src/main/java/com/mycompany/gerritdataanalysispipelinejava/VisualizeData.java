@@ -4,8 +4,11 @@
  */
 package com.mycompany.gerritdataanalysispipelinejava;
 
+import com.itextpdf.text.BadElementException;
 import com.mycompany.gerritdataanalysispipelinejava.PieGraph;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
@@ -14,8 +17,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -30,6 +36,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
@@ -118,7 +125,7 @@ public class VisualizeData{
  
     } 
     
-    public static JFrame createLineGraph(String[] input){
+    public static JPanel createLineGraph(String[] input){
         
         int dataSize = input.length;
         int index = dataSize/3;
@@ -127,7 +134,6 @@ public class VisualizeData{
         int indexOpenLower = index;
         int indexOpenUpper = index*2;
         int indexClosedLower = indexOpenUpper;
-        //int indexClosedUpper = dataSize;
         int counterOpen = 0;
         int counterClosed = 0;
         int counterDate = 0;
@@ -193,77 +199,38 @@ public class VisualizeData{
         lineRenderer.setSeriesPaint(0,lineChartColor);
         
         //Create new content frame
-        JFrame frame = new JFrame("Analyzed Review Data Visualization");        
-        frame.setSize(800, 800);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       
            
         //create panel to display graph
         JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel,BoxLayout.Y_AXIS));
        
         ChartPanel graphPanelOpen = new ChartPanel(graphOpen);
         ChartPanel graphPanelClosed = new ChartPanel(graphClosed);
         
         graphPanelOpen.removeAll();
         graphPanelClosed.removeAll();
-       // mainPanel.removeAll();
-        //  graphPanelOpen.add(graphPanel,BorderLayout.CENTER);
-        //  graphPanelClosed.add(graphPanelClosed,BorderLayout.EAST);  
+     
         graphPanelOpen.validate();
         graphPanelClosed.validate();
         mainPanel.validate();
-//        frame.add(new JScrollPane(graphPanelOpen));
-//        frame.add(new JScrollPane(graphPanelClosed));
+        
         mainPanel.add(graphPanelOpen, BorderLayout.NORTH);
         mainPanel.add(graphPanelClosed, BorderLayout.SOUTH);
-        //frame.add(new ChartPanel(graphOpen), BorderLayout.EAST);
-        //frame.add(new ChartPanel(graphClosed), BorderLayout.CENTER);
-
-        frame.add(new JScrollPane(mainPanel));
+        
+        return mainPanel;
+    }
+    
+    public static void frameToPdf(JPanel graphPanel){
+        String file = "gerritDataVisualization.pdf";
+        JFrame frame = new JFrame("Analyzed Review Data Visualization");        
+        frame.setSize(400, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        frame.add(new JScrollPane(graphPanel));
         frame.pack();
         frame.setVisible(true); 
         
-        return frame;
-    }
-    
-//    public static void createPDF(JFrame graph){
-//        JFileChooser pdfFile = new JFileChooser();
-//        pdfFile.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//        
-//        int saveStatus = pdfFile.showSaveDialog(pdfFile);
-//    
-//        if(saveStatus == JFileChooser.APPROVE_OPTION){
-//            path = pdfFile.getSelectedFile().getPath();
-//        }
-//        
-//        
-//        try{
-//            Document doc = new Document();
-//            PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream("gerritDataVisualization.pdf"));
-//            doc.open();
-//            PdfContentByte contentByte = writer.getDirectContent();
-//            PdfTemplate template = contentByte.createTemplate(500, 500);
-//            Graphics2D g2 = template.createGraphics(500, 500);
-//            mainPanel.print(g2);
-//            g2.dispose();
-//            contentByte.addTemplate(template, 30, 800);
-//            //Pdf pdfTable = new PdfTable(3); // ev vanlig table istället   
-//        }
-//        catch(Exception e){
-//            System.out.println("");
-//        }
-//        
-//        
-//        //doc.add(new Paragraph("Hello this is a pdf file from project tabelle"));
-//       
-//        if(doc.isOpen()){
-//            doc.close();
-//            }
-//        
-//    }
-    
-    
-    public static void frameToPdf(JFrame graph){
-        String file = "gerritDataVisualization.pdf";
         try{
             Document doc = new Document();
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(file));
@@ -276,8 +243,8 @@ public class VisualizeData{
             Graphics2D graphics = pdfTemplate.createGraphics(PageSize.A4.getWidth(),PageSize.A4.getHeight());
             graphics.scale(0.4, 0.4);
             
-            for(int i = 0; i< graph.getContentPane().getComponents().length; i++){
-                Component comp = graph.getContentPane().getComponent(i);
+            for(int i = 0; i< frame.getContentPane().getComponents().length; i++){
+                Component comp = frame.getContentPane().getComponent(i);
                 if(comp instanceof JLabel || comp instanceof JScrollPane){
                     graphics.translate(comp.getBounds().x, comp.getBounds().y);
                     if(comp instanceof JScrollPane){
@@ -293,6 +260,21 @@ public class VisualizeData{
             System.out.println("Error to create PDF: " + e.toString());
         }
     
+    }
+    
+    public static BufferedImage graphToImage(JPanel graph) throws IOException{
+        int width = graph.getWidth();
+        int height = graph.getHeight();
+        BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+        image.getScaledInstance(800, 800, BufferedImage.SCALE_DEFAULT);
+        Graphics2D graphics = image.createGraphics();
+        graph.getPreferredSize(); //ot panel.getPreferredSize()
+        graph.paint(graphics);
+        graph.print(graphics);
+        graphics.dispose();
+        File imageResult = new File("AnalyzedData.png");
+        ImageIO.write(image, "png", imageResult);
+        return image;
     }
     
  public static void main(String[] args) throws Exception{

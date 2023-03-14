@@ -4,12 +4,16 @@
 package com.mycompany.gerritdataanalysispipelinejava;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.mycompany.gerritdataanalysispipelinejava.JsonContent;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.text.DocumentException;
 import static com.mycompany.gerritdataanalysispipelinejava.AnalyseData.analyzeJsonData;
 import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createLineGraph;
 import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.frameToPdf;
 import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.createTable;
+import static com.mycompany.gerritdataanalysispipelinejava.VisualizeData.graphToImage;
+import java.awt.image.BufferedImage;
+
+
 import java.lang.Object;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,6 +39,7 @@ import java.net.URI;
 import java.net.http.HttpHeaders;
 import java.util.Optional;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.ws.rs.core.UriBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -159,7 +164,7 @@ public class FetchData {
         return arrayToParse;
     }
     
-    public static void main(String[] args) throws IOException, InterruptedException, ParseException {
+    public static void main(String[] args) throws IOException, InterruptedException, ParseException, FileNotFoundException, DocumentException {
         //Fix start and end Date here instead
         
         Scanner scanner = new Scanner(System.in);
@@ -180,8 +185,9 @@ public class FetchData {
         String[] pieChartData = analyzeJsonData(jsonData, dataInput);
        // String[] visualizationInput= {startDate, endDate, pieChartData[0],pieChartData[1]};
         //createTable(visualizationInput);
-        JFrame frame = createLineGraph(pieChartData);
-        frameToPdf(frame);
+        JPanel graphPanel = createLineGraph(pieChartData);
+        BufferedImage image = graphToImage(graphPanel);
+        frameToPdf(graphPanel);
     }
 
 }
