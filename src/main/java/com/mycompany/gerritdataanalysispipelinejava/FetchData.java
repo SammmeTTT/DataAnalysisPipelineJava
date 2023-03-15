@@ -143,12 +143,12 @@ public class FetchData {
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Write a start date in format (2023-02-13): ");
-        String tempDate = "2023-01-15"; //scanner.next()
+        String tempDate = scanner.next();
         int tempDay = Integer.parseInt(tempDate.substring(9, 10));
         String correctDay = String.valueOf(tempDay - 1);
         String startDate = tempDate.replace(tempDate.substring(9, 10), correctDay);
         System.out.println("Write a end date in format (2023-02-15): ");
-        String endDate = "2023-02-29"; //scanner.next()
+        String endDate = scanner.next();
 
         JSONArray array = apiRequest(startDate, endDate);
         //JSONArray array = toJsonArray(client);
