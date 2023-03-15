@@ -47,10 +47,9 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 //import javafx.embed.swing.SwingFXUtils;
 
+public class VisualizeData {
 
-public class VisualizeData{
-    
-    public static void createTable(String[] data){
+    public static void createTable(String[] data) {
 //        int dataSize = data.length;
 //        int indexRange = dataSize/3;
         String nrOpenReviews = data[0];
@@ -59,148 +58,145 @@ public class VisualizeData{
         String numberOfOpenReviews = data[2];
         String numberOfClosedReviews = data[3];
 
-        
-        
-        String[][] tableContent={
-            {startDate,endDate, numberOfOpenReviews, numberOfClosedReviews}
+        String[][] tableContent = {
+            {startDate, endDate, numberOfOpenReviews, numberOfClosedReviews}
         };
-        
+
         String[] headers = {"Start Date", "End Date", "Number of Open Reviews", "Number of Closed Reviews"};
 
-        JTable dataTable= new JTable(tableContent,headers);
-            
+        JTable dataTable = new JTable(tableContent, headers);
+
         JFrame frame = new JFrame("Analyzed Review Data Visualization");
         frame.add(new JScrollPane(dataTable));
-        
+
         //frame.add(JFreeChart);
-        
         frame.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);       
-        
+        frame.setVisible(true);
+
     }
-    
-    public static JPanel createLineGraph(String[] input){
-        
+
+    public static JPanel createLineGraph(String[] input) {
+
         int dataSize = input.length;
-        int index = dataSize/3;
+        int index = dataSize / 3;
         int indexDatesBound = index;
-        
+
         int indexOpenLower = index;
-        int indexOpenUpper = index*2;
+        int indexOpenUpper = index * 2;
         int indexClosedLower = indexOpenUpper;
         int counterOpen = 0;
         int counterClosed = 0;
         int counterDate = 0;
-        
+
         String[] dates = new String[index];
         int[] openReviews = new int[index];
         int[] closedReviews = new int[index];
-        
+
         String startYear = "";
         String endYear = "";
         String startMonth = "";
         String endMonth = "";
 
-
-        for(int i = dataSize-1; i >= 0; i--){
+        //counts open and closed reviews and save dates
+        for (int i = dataSize - 1; i >= 0; i--) {
             String elemAtIndex = input[i];
-            if(indexClosedLower <= i){
+            if (indexClosedLower <= i) {
                 int nrOfClosed = Integer.parseInt(elemAtIndex);
                 closedReviews[counterClosed] = nrOfClosed;
                 counterClosed++;
-            }
-            else if(indexOpenLower <= i && i < indexClosedLower){
+            } else if (indexOpenLower <= i && i < indexClosedLower) {
                 int nrOfOpen = Integer.parseInt(elemAtIndex);
                 openReviews[counterOpen] = nrOfOpen;
                 counterOpen++;
-            }
-            else if(i>=0 && i<indexDatesBound){
+            } else if (i >= 0 && i < indexDatesBound) {
                 String day = elemAtIndex.substring(8, 10);
-                if(i==indexDatesBound-1){
+                if (i == indexDatesBound - 1) {
                     startYear = elemAtIndex.substring(0, 4);
                     startMonth = elemAtIndex.substring(5, 7);
-                }else if(i==0){
+                } else if (i == 0) {
                     endYear = elemAtIndex.substring(0, 4);
                     endMonth = elemAtIndex.substring(5, 7);
                 }
                 dates[counterDate] = day;
                 counterDate++;
             }
-                 
+
         }
-        
+
         DefaultCategoryDataset dataOpened = new DefaultCategoryDataset();
         DefaultCategoryDataset dataClosed = new DefaultCategoryDataset();
 
-    for (int j = 0; j < index; j++){
-        dataOpened.setValue(openReviews[j], "Amount", dates[j]);
-        dataClosed.setValue(closedReviews[j], "Amount", dates[j]);
-    } 
-        //Days in Month \n Start Date: "+ "startDate" + "and End Date: " + "endDate"
-        JFreeChart graphOpen = ChartFactory.createLineChart("Code Review Graph","Start Year: "+startYear+" End Year: "+endYear+" Start Month: "+startMonth+" End Month: "+ endMonth +" Days in Month: (see graph)","Number of Opened Reviews",dataOpened,PlotOrientation.VERTICAL,false,true,false);
-        JFreeChart graphClosed = ChartFactory.createLineChart("Code Review Graph","Start Year: "+startYear+" End Year: "+endYear+" Start Month: "+startMonth+" End Month: "+endMonth + " Days in Month: (see graph)","Number of Closed Reviews",dataClosed,PlotOrientation.VERTICAL,false,true,false);
-        
+        for (int j = 0; j < index; j++) {
+            //initiate graphData and creates titles
+            dataOpened.setValue(openReviews[j], "Amount", dates[j]);
+            dataClosed.setValue(closedReviews[j], "Amount", dates[j]);
+        }
+        JFreeChart graphOpen = ChartFactory.createLineChart("Code Review Graph", "Start Year: " + startYear + " End Year: " + endYear + " Start Month: " + startMonth + " End Month: " + endMonth + " Days in Month: (see graph)", "Number of Opened Reviews", dataOpened, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChart graphClosed = ChartFactory.createLineChart("Code Review Graph", "Start Year: " + startYear + " End Year: " + endYear + " Start Month: " + startMonth + " End Month: " + endMonth + " Days in Month: (see graph)", "Number of Closed Reviews", dataClosed, PlotOrientation.VERTICAL, false, true, false);
+
         //Create plot
         CategoryPlot lineCategoryPlotOpen = graphOpen.getCategoryPlot();
         CategoryPlot lineCategoryPlotClosed = graphClosed.getCategoryPlot();
-        
+
         lineCategoryPlotOpen.setBackgroundPaint(Color.white);
         lineCategoryPlotClosed.setBackgroundPaint(Color.white);
 
         //Adds costumization to the linegraph
         LineAndShapeRenderer lineRenderer = (LineAndShapeRenderer) lineCategoryPlotOpen.getRenderer();
-        Color lineChartColor = new Color(0,100,200);
-        lineRenderer.setSeriesPaint(0,lineChartColor);
-        
+        Color lineChartColor = new Color(0, 100, 200);
+        lineRenderer.setSeriesPaint(0, lineChartColor);
+
         //create panel to display graph
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel,BoxLayout.Y_AXIS));
-       
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
         ChartPanel graphPanelOpen = new ChartPanel(graphOpen);
         ChartPanel graphPanelClosed = new ChartPanel(graphClosed);
-        
+
         graphPanelOpen.removeAll();
         graphPanelClosed.removeAll();
-     
+
         graphPanelOpen.validate();
         graphPanelClosed.validate();
         mainPanel.validate();
-        
+
         mainPanel.add(graphPanelOpen, BorderLayout.NORTH);
         mainPanel.add(graphPanelClosed, BorderLayout.SOUTH);
-        
+
         return mainPanel;
     }
-    
-    public static void frameToPdf(JPanel graphPanel){
+
+    public static void frameToPdf(JPanel graphPanel) {
+        //creates jframe and initiates the frame
         String file = "gerritDataVisualization.pdf";
-        JFrame frame = new JFrame("Analyzed Review Data Visualization");        
+        JFrame frame = new JFrame("Analyzed Review Data Visualization");
         frame.setSize(400, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         frame.add(new JScrollPane(graphPanel));
         frame.pack();
-        frame.setVisible(true); 
-        
-        try{
+        frame.setVisible(true);
+
+        try {//create a document, and pdftemplate and pdf from that
             Document doc = new Document();
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(file));
             doc.open();
-            
+
             PdfContentByte bytes = writer.getDirectContent();
-            PdfTemplate pdfTemplate =bytes.createTemplate(PageSize.A4.getWidth(),PageSize.A4.getHeight()); 
-            bytes.addTemplate(pdfTemplate,0,0);
-            
-            Graphics2D graphics = pdfTemplate.createGraphics(PageSize.A4.getWidth(),PageSize.A4.getHeight());
+            PdfTemplate pdfTemplate = bytes.createTemplate(PageSize.A4.getWidth(), PageSize.A4.getHeight());
+            bytes.addTemplate(pdfTemplate, 0, 0);
+
+            Graphics2D graphics = pdfTemplate.createGraphics(PageSize.A4.getWidth(), PageSize.A4.getHeight());
             graphics.scale(0.4, 0.4);
-            
-            for(int i = 0; i< frame.getContentPane().getComponents().length; i++){
+
+            //set bounds for jpanels
+            for (int i = 0; i < frame.getContentPane().getComponents().length; i++) {
                 Component comp = frame.getContentPane().getComponent(i);
-                if(comp instanceof JLabel || comp instanceof JScrollPane){
+                if (comp instanceof JLabel || comp instanceof JScrollPane) {
                     graphics.translate(comp.getBounds().x, comp.getBounds().y);
-                    if(comp instanceof JScrollPane){
-                    comp.setBounds(0, 0, (int)PageSize.A4.getWidth()*2,(int)PageSize.A4.getHeight()*2);
+                    if (comp instanceof JScrollPane) {
+                        comp.setBounds(0, 0, (int) PageSize.A4.getWidth() * 2, (int) PageSize.A4.getHeight() * 2);
                     }
                     comp.paintAll(graphics);
                     comp.addNotify();
@@ -208,25 +204,10 @@ public class VisualizeData{
             }
             graphics.dispose();
             doc.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Error to create PDF: " + e.toString());
         }
-    
+
     }
-    
-    public static BufferedImage graphToImage(JPanel graph) throws IOException{
-        int width = graph.getWidth();
-        int height = graph.getHeight();
-        BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-        image.getScaledInstance(800, 800, BufferedImage.SCALE_DEFAULT);
-        Graphics2D graphics = image.createGraphics();
-        graph.getPreferredSize(); //ot panel.getPreferredSize()
-        graph.paint(graphics);
-        graph.print(graphics);
-        graphics.dispose();
-        File imageResult = new File("AnalyzedData.png");
-        ImageIO.write(image, "png", imageResult);
-        return image;
-    }   
- 
+
 }
